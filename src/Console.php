@@ -208,7 +208,7 @@ final class Console
         return $this->flags;
     }
 
-    public function ask(string $question)
+    public function ask(string $question): string
     {
         $this->message( \PHP_EOL . $question . \PHP_EOL);
         $handle = fopen("php://stdin", "r");
@@ -216,7 +216,7 @@ final class Console
             $line = fgets($handle);
         } while ($line == '');
         fclose($handle);
-        return $line;
+        return trim((string)$line);
     }
 
     /**
