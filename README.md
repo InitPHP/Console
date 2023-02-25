@@ -16,20 +16,20 @@ composer require initphp/console
 ```php
 #!usr/bin/php
 require_once __DIR__ . '/../vendor/autoload.php';
-use InitPHP\Console\Console;
+use \InitPHP\Console\{Application, Input, Output};
 
-$console = new Console();
+$console = new Application("My Console Application", '1.0');
 
 // Register commands ...
 
 // hello -name=John
-$console->register('hello', function (Console $console) {
-    if ($console->has_flag('name')) {
-        $console->message("Hello {name}", [
-            'name'  => $console->flag('name')
+$console->register('hello', function (Input $input, Output $output) {
+    if ($input->hasArgument('name')) {
+        $output->writeln('Hello {name}', [
+            'name'  => $input->getArgument('name')
         ]);
-    }else{
-        $console->message('Hello World!');
+    } else {
+        $output->writeln('Hello World!');
     }
 }, 'Says hello.');
 
