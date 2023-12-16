@@ -14,7 +14,8 @@ composer require initphp/console
 ## Usage
 
 ```php
-#!usr/bin/php
+#!/usr/bin/env php
+<?php
 require_once __DIR__ . '/../vendor/autoload.php';
 use \InitPHP\Console\{Application, Input, Output};
 
@@ -35,6 +36,10 @@ $console->register('hello', function (Input $input, Output $output) {
 
 
 $console->run();
+```
+
+```
+php console.php list
 ```
 
 ## Credits
