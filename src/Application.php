@@ -12,7 +12,6 @@
  */
 
 declare(strict_types=1);
-
 namespace InitPHP\Console;
 
 class Application
@@ -36,7 +35,7 @@ class Application
 
     protected $command;
 
-    public function __construct(string $application = 'InitPHP Console Application', string $version = '1.1')
+    public function __construct(string $application = 'InitPHP Console Application', string $version = '2.0')
     {
         $this->application = $application;
         $this->version = $version;
@@ -102,7 +101,7 @@ class Application
         $this->input = new Input($inputs);
         $this->output = new Output();
 
-        if ($this->command === 'help') {
+        if (in_array($this->command, ['help', 'list'])) {
             $this->help($this->input, $this->output);
             return true;
         }
@@ -193,7 +192,7 @@ class Application
         $output->writeln('');
 
         $output->writeln('Copyright © 2022 - ' . date("Y") . ' InitPHP Console ' . self::VERSION);
-        $output->writeln('http://initphp.org');
+        $output->writeln('http://initphp.org - https://github.com/InitPHP/Console');
     }
 
     private function commandHelp(Input $input, Output $output, array $command)
