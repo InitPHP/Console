@@ -1,12 +1,15 @@
 {
     "name": "initphp/console",
-    "description": "It is a simple helper library that will allow you to write your console/cli application with PHP.",
+    "description": "A simple helper library for writing console/CLI applications in PHP. As of 2.1 this package also ships the table renderer previously distributed as initphp/cli-table.",
     "type": "library",
     "license": "MIT",
     "autoload": {
         "psr-4": {
             "InitPHP\\Console\\": "src/"
-        }
+        },
+        "files": [
+            "src/aliases.php"
+        ]
     },
     "authors": [
         {
@@ -19,5 +22,8 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.2"
+    },
+    "replace": {
+        "initphp/cli-table": "*"
     }
 }
