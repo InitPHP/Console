@@ -1,13 +1,13 @@
 <?php
+
 /**
  * Output.php
  *
- * This file is part of Console.
+ * This file is part of InitPHP Console.
  *
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2022 Muhammet ŞAFAK
- * @license    ./LICENSE  MIT
- * @version    2.0
+ * @license    https://github.com/InitPHP/Console/blob/main/LICENSE  MIT
  * @link       https://www.muhammetsafak.com.tr
  */
 
@@ -15,7 +15,14 @@ declare(strict_types=1);
 
 namespace InitPHP\Console;
 
-class Output
+/**
+ * Writes coloured/styled text to an output stream and reads interactive
+ * answers from an input stream.
+ *
+ * Both streams default to the standard CLI handles but may be injected — for
+ * example with `php://memory` handles — to make the component testable.
+ */
+class Output implements OutputInterface
 {
     public const COLOR_DEFAULT      = 39;
     public const COLOR_BLACK        = 30;
@@ -31,7 +38,7 @@ class Output
     public const COLOR_LIGHT_GREEN  = 92;
     public const COLOR_LIGHT_YELLOW = 93;
     public const COLOR_LIGHT_BLUE   = 94;
-    public const COLOR_LIGHT_MAGENTA= 95;
+    public const COLOR_LIGHT_MAGENTA = 95;
     public const COLOR_LIGHT_CYAN   = 96;
     public const COLOR_WHITE        = 97;
 
@@ -48,27 +55,75 @@ class Output
     public const UNDERLINE          = 4;
     public const STRIKETHROUGH      = 9;
 
-    function progressBar($done, $total) {
+    /**
+     * Stream that all output is written to.
+     *
+     * @var resource
+     */
+    protected $stdout;
 
-        if (!\is_numeric($done) || !\is_numeric($total)) {
-            throw new \InvalidArgumentException('\$done and \$total can be integer or float.');
-        }
+    /**
+     * Stream that interactive answers are read from.
+     *
+     * @var resource
+     */
+    protected $stdin;
 
-        $progress = \floor(($done / $total) * 100);
-        $done_progress = 100 - $progress;
-
-        \fwrite(\STDOUT, \sprintf("\033[0G\033[2K[%'=" . $progress . "s>%-" . $done_progress . "s] - " .$progress ."%%   ". $done . "/" . $total, "", ""));
+    /**
+     * @param resource|null $stdout Output stream; defaults to `STDOUT`.
+     * @param resource|null $stdin  Input stream; defaults to `STDIN`.
+     */
+    public function __construct($stdout = null, $stdin = null)
+    {
+        $this->stdout = $stdout ?? \STDOUT;
+        $this->stdin = $stdin ?? \STDIN;
     }
 
-    public function list(array $rows, int $leftSpace = 0)
+    /**
+     * Renders a single-line, in-place updating progress bar.
+     *
+     * @param int|float $done  Work completed so far.
+     * @param int|float $total Total work; must be greater than zero.
+     * @throws \InvalidArgumentException When the inputs are not numeric or `$total <= 0`.
+     */
+    public function progressBar($done, $total): void
+    {
+        if (!\is_numeric($done) || !\is_numeric($total)) {
+            throw new \InvalidArgumentException('$done and $total must be integer or float.');
+        }
+        if ($total <= 0) {
+            throw new \InvalidArgumentException('$total must be greater than zero.');
+        }
+
+        $progress = (int)\floor(($done / $total) * 100);
+        if ($progress < 0) {
+            $progress = 0;
+        } elseif ($progress > 100) {
+            $progress = 100;
+        }
+        $remaining = 100 - $progress;
+
+        \fwrite($this->stdout, \sprintf(
+            "\033[0G\033[2K[%'=" . $progress . "s>%-" . $remaining . "s] - %d%%   %s/%s",
+            '',
+            '',
+            $progress,
+            $done,
+            $total
+        ));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function list(array $rows, int $leftSpace = 0): void
     {
         $space = 1;
-
         foreach ($rows as $key => $value) {
             if (!\is_string($key)) {
                 continue;
             }
-            $rowSpace = (int)\ceil(strlen($key) / 8);
+            $rowSpace = (int)\ceil(\strlen($key) / 8);
             if ($space < $rowSpace) {
                 $space = $rowSpace;
             }
@@ -81,53 +136,59 @@ class Output
                 $output .= $value;
                 continue;
             }
-            $line = $lineStart
+            $output .= $lineStart
                 . $key
                 . \str_repeat("\t", $space)
                 . ': '
-                . $value;
-            $output .= $line . \PHP_EOL;
+                . $value
+                . \PHP_EOL;
         }
-        \fwrite(\STDOUT, $output);
+        \fwrite($this->stdout, $output);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function ask(string $question, bool $empty = true)
     {
         $this->write($question, [], true);
 
         do {
-            $input = Helpers::strValueCast(\trim(\fgets(\STDIN)));
-            if (\in_array($input, ['exit', 'quit'])) {
-                exit;
+            $input = Helpers::strValueCast(\trim((string)\fgets($this->stdin)));
+            if (\in_array($input, ['exit', 'quit'], true)) {
+                $this->terminate();
+                return null;
             }
-        } while ($empty === FALSE && $input == '');
+        } while ($empty === false && $input === '');
 
         return $input;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function question(Question $question)
     {
         $this->write($question->getQuestion(), [], true);
 
         do {
-            $answer = \trim(\fgets(\STDIN));
+            $answer = \trim((string)\fgets($this->stdin));
             if ($question->hasOption($answer)) {
                 return Helpers::strValueCast($answer);
             }
-            if (\in_array($answer, ['exit', 'quit'])) {
-                exit;
+            if (\in_array($answer, ['exit', 'quit'], true)) {
+                $this->terminate();
+                return null;
             }
             if ($question->isOptional()) {
-                $default = $question->getDefault();
-                if ($default !== '__Qu€sti0nN0D€f@ultV@lue__') {
-                    return $default;
-                } else {
-                    return $answer;
-                }
+                return $question->hasDefault() ? $question->getDefault() : $answer;
             }
         } while (true);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function write(string $str, array $context = [], bool $newLine = false, array $format = [self::COLOR_DEFAULT]): void
     {
         if (!empty($context)) {
@@ -141,33 +202,60 @@ class Output
         }
 
         $msg = "\e[" . \implode(';', $format) . "m" . $str . "\e[0m"
-            . ($newLine !== FALSE ? \PHP_EOL : '');
-        \fwrite(\STDOUT, $msg);
+            . ($newLine ? \PHP_EOL : '');
+        \fwrite($this->stdout, $msg);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function writeln(string $str, array $context = [], array $format = [self::COLOR_DEFAULT]): void
     {
         $this->write($str, $context, true, $format);
     }
 
-    public function error(string $msg, array $context = array()): void
+    /**
+     * {@inheritDoc}
+     */
+    public function error(string $msg, array $context = []): void
     {
         $this->writeln('[ERROR] ' . $msg, $context, [self::COLOR_WHITE, self::BOLD, self::BACKGROUND_RED]);
     }
 
-    public function success(string $msg, array $context = array()): void
+    /**
+     * {@inheritDoc}
+     */
+    public function success(string $msg, array $context = []): void
     {
         $this->writeln('[SUCCESS] ' . $msg, $context, [self::COLOR_WHITE, self::BACKGROUND_GREEN, self::BOLD]);
     }
 
-    public function warning(string $msg, array $context = array()): void
+    /**
+     * {@inheritDoc}
+     */
+    public function warning(string $msg, array $context = []): void
     {
         $this->writeln('[WARNING] ' . $msg, $context, [self::COLOR_WHITE, self::BACKGROUND_YELLOW, self::BOLD]);
     }
 
-    public function info(string $msg, array $context = array()): void
+    /**
+     * {@inheritDoc}
+     */
+    public function info(string $msg, array $context = []): void
     {
         $this->writeln('[INFO] ' . $msg, $context, [self::COLOR_CYAN]);
     }
 
+    /**
+     * Terminates the current process.
+     *
+     * Extracted into a dedicated method so that interactive flows can be
+     * exercised in tests by overriding it (e.g. to throw instead of exit).
+     *
+     * @codeCoverageIgnore
+     */
+    protected function terminate(int $code = 0): void
+    {
+        exit($code);
+    }
 }

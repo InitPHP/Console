@@ -1,13 +1,13 @@
 <?php
+
 /**
  * Input.php
  *
- * This file is part of Console.
+ * This file is part of InitPHP Console.
  *
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2022 Muhammet ŞAFAK
- * @license    ./LICENSE  MIT
- * @version    2.0
+ * @license    https://github.com/InitPHP/Console/blob/main/LICENSE  MIT
  * @link       https://www.muhammetsafak.com.tr
  */
 
@@ -15,53 +15,153 @@ declare(strict_types=1);
 
 namespace InitPHP\Console;
 
-class Input
+/**
+ * Parses and exposes the raw command-line tokens that follow the command name.
+ *
+ * @see InputInterface for the semantics of arguments, options and segments.
+ */
+class Input implements InputInterface
 {
-
+    /**
+     * The raw tokens this instance was constructed from.
+     *
+     * @var array<int, string>
+     */
     protected $argv;
 
+    /**
+     * Parsed `--name(=value)` arguments.
+     *
+     * @var array<string, mixed>
+     */
     protected $arguments = [];
 
+    /**
+     * Parsed `-name(=value)` options.
+     *
+     * @var array<string, mixed>
+     */
     protected $options = [];
 
+    /**
+     * Parsed bare positional tokens.
+     *
+     * @var array<int, mixed>
+     */
     protected $segments = [];
 
+    /**
+     * @param array<int, string> $argv Tokens that follow the command name.
+     */
     public function __construct(array $argv)
     {
         $this->argv = $argv;
-        for ($i = 0; $i < \count($this->argv); ++$i) {
-            if (!isset($this->argv[$i])) {
+        $this->parse($argv);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasArgument(string $name): bool
+    {
+        return \array_key_exists($name, $this->arguments);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getArgument(string $name, $default = null)
+    {
+        return \array_key_exists($name, $this->arguments) ? $this->arguments[$name] : $default;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function allArguments(): array
+    {
+        return $this->arguments;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasSegment(int $index): bool
+    {
+        return \array_key_exists($index, $this->segments);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSegment(int $index, $default = null)
+    {
+        return \array_key_exists($index, $this->segments) ? $this->segments[$index] : $default;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function allSegment(): array
+    {
+        return $this->segments;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasOption(string $name): bool
+    {
+        return \array_key_exists($name, $this->options);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOption(string $name, $default = null)
+    {
+        return \array_key_exists($name, $this->options) ? $this->options[$name] : $default;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function allOptions(): array
+    {
+        return $this->options;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function importArguments(array ...$arguments): void
+    {
+        $this->arguments = \array_merge($this->arguments, ...$arguments);
+    }
+
+    /**
+     * Splits the raw tokens into arguments, options and segments.
+     *
+     * @param array<int, string> $argv
+     */
+    private function parse(array $argv): void
+    {
+        foreach ($argv as $segment) {
+            if (!\is_string($segment)) {
                 continue;
             }
-            $segment = $this->argv[$i];
+            // A token made up solely of whitespace and/or dashes (e.g. "--") carries no data.
             if (\trim($segment, " \t\n\r\0\x0B-") === '') {
                 continue;
             }
-            if (\substr($segment, 0, 2) == '--') {
-                /** ARGUMENTS */
-                $seg = \ltrim($segment, '-');
-                if (\strpos($seg, '=') !== FALSE) {
-                    $split = \explode('=', $seg, 2);
-                    $this->arguments[$split[0]] = Helpers::strValueCast($split[1]);
-                } else {
-                    $this->arguments[$seg] = '';
-                }
+
+            if (\strpos($segment, '--') === 0) {
+                $this->parseArgument(\ltrim($segment, '-'));
                 continue;
             }
 
-            if (\substr($segment, 0, 1) == '-') {
-                /** OPTIONS */
-                $seg = \ltrim($segment, '-');
-                if (\strpos($seg, '=') === FALSE) {
-                    !isset($this->options[$seg]) && $this->options[$seg] = '';
-                    $options = \preg_split('//', $seg, -1, \PREG_SPLIT_NO_EMPTY);
-                    foreach ($options as $option) {
-                        $this->options[$option] = $option;
-                    }
-                } else {
-                    $split = \explode('=', $seg, 2);
-                    $this->options[$split[0]] = Helpers::strValueCast($split[1]);
-                }
+            if (\strpos($segment, '-') === 0) {
+                $this->parseOption(\ltrim($segment, '-'));
                 continue;
             }
 
@@ -70,81 +170,36 @@ class Input
     }
 
     /**
-     * @param string $name
-     * @return bool
+     * Stores a single `--name` or `--name=value` argument.
      */
-    public function hasArgument(string $name): bool
+    private function parseArgument(string $token): void
     {
-        return \array_key_exists($name, $this->arguments);
+        if (\strpos($token, '=') !== false) {
+            [$name, $value] = \explode('=', $token, 2);
+            $this->arguments[$name] = Helpers::strValueCast($value);
+            return;
+        }
+        $this->arguments[$token] = '';
     }
 
     /**
-     * @param string $name
-     * @param mixed $default
-     * @return mixed|null
+     * Stores a `-name=value` option, or one/more combined boolean short flags.
+     *
+     * `-f`   →  `['f' => 'f']`
+     * `-abc` →  `['a' => 'a', 'b' => 'b', 'c' => 'c']`
+     * `-k=v` →  `['k' => 'v']`
      */
-    public function getArgument(string $name, $default = null)
+    private function parseOption(string $token): void
     {
-        return \array_key_exists($name, $this->arguments) ? $this->arguments[$name] : $default;
-    }
+        if (\strpos($token, '=') !== false) {
+            [$name, $value] = \explode('=', $token, 2);
+            $this->options[$name] = Helpers::strValueCast($value);
+            return;
+        }
 
-    /**
-     * @return array
-     */
-    public function allArguments(): array
-    {
-        return $this->arguments;
+        $flags = \preg_split('//', $token, -1, \PREG_SPLIT_NO_EMPTY);
+        foreach (($flags ?: []) as $flag) {
+            $this->options[$flag] = $flag;
+        }
     }
-
-    /**
-     * @param int $index
-     * @return bool
-     */
-    public function hasSegment(int $index): bool
-    {
-        return \array_key_exists($index, $this->segments);
-    }
-
-    /**
-     * @param int $index
-     * @param mixed $default
-     * @return mixed
-     */
-    public function getSegment(int $index, $default = null)
-    {
-        return \array_key_exists($index, $this->segments) ? $this->segments[$index] : $default;
-    }
-
-    /**
-     * @return array
-     */
-    public function allSegment(): array
-    {
-        return $this->segments;
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function hasOption(string $name): bool
-    {
-        return array_key_exists($name, $this->options);
-    }
-
-    /**
-     * @param string $name
-     * @param $default
-     * @return mixed|null
-     */
-    public function getOption(string $name, $default = null)
-    {
-        return \array_key_exists($name, $this->options) ? $this->options[$name] : $default;
-    }
-
-    public function importArguments(array ...$arguments)
-    {
-        $this->arguments = \array_merge($this->arguments, ...$arguments);
-    }
-
 }
