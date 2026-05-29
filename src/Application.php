@@ -83,7 +83,7 @@ class Application
      * @param string      $version     Application version string.
      * @param Output|null $output      Output implementation; a default {@see Output} is created when null.
      */
-    public function __construct(string $application = 'InitPHP Console Application', string $version = self::VERSION, Output $output = null)
+    public function __construct(string $application = 'InitPHP Console Application', string $version = self::VERSION, ?Output $output = null)
     {
         $this->application = $application;
         $this->version = $version;
@@ -144,7 +144,7 @@ class Application
      * @param array<int, string>|null $argv Tokens to dispatch; defaults to the global `$argv`.
      * @return bool `true` when a command (or help) ran, `false` when nothing matched or no command was given.
      */
-    public function run(array $argv = null): bool
+    public function run(?array $argv = null): bool
     {
         if ($argv === null) {
             $argv = \is_array($GLOBALS['argv'] ?? null) ? $GLOBALS['argv'] : [];
