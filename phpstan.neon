@@ -1,0 +1,9 @@
+parameters:
+    level: 6
+    paths:
+        - src
+    excludePaths:
+        # Runtime BC shim that intentionally references the (now absent) legacy class.
+        - src/aliases.php
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
