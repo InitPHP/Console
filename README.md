@@ -2,6 +2,7 @@
 
 A small, dependency-free helper library for writing console / CLI applications in PHP — command routing, typed arguments, coloured output, interactive questions and a styleable ANSI table renderer.
 
+[![Designed & Maintained with Tan](https://www.muhammetsafak.com.tr/badges/designed-maintained-with-tan.svg)](https://www.muhammetsafak.com.tr/en/tan/)
 [![CI](https://github.com/InitPHP/Console/actions/workflows/ci.yml/badge.svg)](https://github.com/InitPHP/Console/actions/workflows/ci.yml)
 [![Latest Stable Version](https://poser.pugx.org/initphp/console/v/stable)](https://packagist.org/packages/initphp/console)
 [![Total Downloads](https://poser.pugx.org/initphp/console/downloads)](https://packagist.org/packages/initphp/console)
