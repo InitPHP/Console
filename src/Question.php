@@ -5,10 +5,10 @@
  *
  * This file is part of InitPHP Console.
  *
- * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * @author     Muhammet ŞAFAK <info@muhammetsafak.com>
  * @copyright  Copyright © 2022 Muhammet ŞAFAK
  * @license    https://github.com/InitPHP/Console/blob/main/LICENSE  MIT
- * @link       https://www.muhammetsafak.com.tr
+ * @link       https://muhammetsafak.com
  */
 
 declare(strict_types=1);
