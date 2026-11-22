@@ -60,9 +60,12 @@ Registers a command. Two modes:
 
 Returns `$this`. Throws:
 
-- `\InvalidArgumentException` — the class does not exist, is not a `Command`,
-  or (closure mode) the handler is not callable.
-- `\LogicException` — a `Command` class does not set its `$command` name.
+- `\InvalidArgumentException` — class mode: the class does not exist or is not
+  a `Command`.
+- `\LogicException` — class mode: a `Command` class does not set its `$command`
+  name.
+- `\TypeError` — closure mode: `$execute` is not callable. The `?callable`
+  parameter type rejects it before the method body runs.
 
 See [Exceptions](Exceptions.md).
 
