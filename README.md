@@ -181,16 +181,13 @@ Non-string cell values are stringified (`[NULL]`, `[TRUE]`, `[FALSE]`, `[ARRAY]`
 
 ## Documentation
 
-In-depth, example-driven guides live in [`docs/`](./docs):
+In-depth, example-driven guides live in [`docs/`](./docs). Start with [Home](./docs/Home.md):
 
-1. [Getting started](./docs/01-getting-started.md)
-2. [Commands](./docs/02-commands.md)
-3. [Input: arguments, options & segments](./docs/03-input.md)
-4. [Typed input arguments](./docs/04-input-arguments.md)
-5. [Output & formatting](./docs/05-output.md)
-6. [Interactive questions](./docs/06-questions.md)
-7. [Tables](./docs/07-tables.md)
-8. [Migrating from `initphp/cli-table`](./docs/08-migrating-from-cli-table.md)
+- [Installation](./docs/Installation.md) and [Quick Start](./docs/Quick-Start.md)
+- [Commands](./docs/Commands.md), [Input](./docs/Input.md) and [Input Arguments](./docs/Input-Arguments.md)
+- [Output](./docs/Output.md), [Questions](./docs/Questions.md) and [Tables](./docs/Tables.md)
+- [API Reference](./docs/API-Reference.md) and [Exceptions](./docs/Exceptions.md)
+- [Recipes](./docs/Recipes.md), [Migration Guide](./docs/Migration-Guide.md) and [FAQ](./docs/FAQ.md)
 
 ## Migrating from `initphp/cli-table`
 
@@ -212,7 +209,7 @@ use InitPHP\CLITable\Table;
 use InitPHP\Console\Utils\Table;
 ```
 
-The alias is a transition aid and may be removed in a future major release. See the [migration guide](./docs/08-migrating-from-cli-table.md) for details.
+The alias is a transition aid and may be removed in a future major release. See the [migration guide](./docs/Migration-Guide.md) for details.
 
 ## Testing & quality
 
