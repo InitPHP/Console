@@ -24,7 +24,7 @@ A small, dependency-free helper library for writing console / CLI applications i
 
 ## Requirements
 
-- PHP **7.2** or higher
+- PHP **8.2** or higher
 - `ext-mbstring` *(optional)* — improves table alignment for multibyte (UTF-8) values
 
 ## Installation
@@ -218,7 +218,7 @@ The alias is a transition aid and may be removed in a future major release. See 
 
 ```bash
 composer test     # PHPUnit
-composer cs       # PHP_CodeSniffer (PSR-12)
+composer cs       # PHP-CS-Fixer (PER-CS)
 composer stan     # PHPStan (level 6)
 composer qa       # all of the above
 ```

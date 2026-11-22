@@ -150,13 +150,13 @@ class Application
             $argv = \is_array($GLOBALS['argv'] ?? null) ? $GLOBALS['argv'] : [];
         }
 
-        $this->terminal = (string)($argv[0] ?? '');
+        $this->terminal = (string) ($argv[0] ?? '');
         \array_shift($argv);
         if (empty($argv)) {
             return false;
         }
 
-        $this->command = (string)\current($argv);
+        $this->command = (string) \current($argv);
         \array_shift($argv);
 
         $this->input = new Input($argv);

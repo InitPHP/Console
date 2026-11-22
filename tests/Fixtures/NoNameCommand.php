@@ -13,7 +13,5 @@ use InitPHP\Console\Output;
  */
 final class NoNameCommand extends Command
 {
-    public function execute(Input $input, Output $output)
-    {
-    }
+    public function execute(Input $input, Output $output) {}
 }

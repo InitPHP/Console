@@ -207,7 +207,7 @@ class Table
     {
         $row = [];
         foreach ($assoc as $key => $value) {
-            $row[\trim((string)$key)] = \trim($this->stringify($value));
+            $row[\trim((string) $key)] = \trim($this->stringify($value));
         }
         $this->rows[] = $row;
 
@@ -247,7 +247,7 @@ class Table
         unset($length);
 
         $res = $this->getTableTopContent($columnLengths)
-            . $this->getFormattedRowContent($headerData, $columnLengths, "\e[" . \implode(';', $this->headerStyle) . "m", true)
+            . $this->getFormattedRowContent($headerData, $columnLengths, "\e[" . \implode(';', $this->headerStyle) . 'm', true)
             . $this->getTableSeparatorContent($columnLengths);
         foreach ($this->rows as $row) {
             foreach ($headerData as $column) {
@@ -255,7 +255,7 @@ class Table
                     $row[$column] = self::NULL_PLACEHOLDER;
                 }
             }
-            $res .= $this->getFormattedRowContent($row, $columnLengths, "\e[" . \implode(';', $this->cellStyle) . "m");
+            $res .= $this->getFormattedRowContent($row, $columnLengths, "\e[" . \implode(';', $this->cellStyle) . 'm');
         }
 
         return $res . $this->getTableBottomContent($columnLengths);
@@ -290,7 +290,7 @@ class Table
             return $value === false ? '[FALSE]' : '[TRUE]';
         }
 
-        return (string)$value;
+        return (string) $value;
     }
 
     /**
@@ -308,13 +308,13 @@ class Table
             $value = ' ' . $value;
             $len = $this->strlen($value) - $lengths[$key] + 1;
             if ($isHeader === false && !empty($this->columnCellStyle[$key])) {
-                $customFormat = "\e[" . \implode(';', $this->columnCellStyle[$key]) . "m";
+                $customFormat = "\e[" . \implode(';', $this->columnCellStyle[$key]) . 'm';
             }
             $cells[] = $format
                 . $customFormat
                 . $value
                 . ($format !== '' || $customFormat !== '' ? "\e[0m" : '')
-                . \str_repeat(' ', (int)\abs($len));
+                . \str_repeat(' ', (int) \abs($len));
         }
         $res .= \implode($this->getChar('middle'), $cells);
 
@@ -368,7 +368,7 @@ class Table
         if (!isset($this->chars[$char])) {
             return '';
         }
-        $res = empty($this->borderStyle) ? '' : "\e[" . \implode(';', $this->borderStyle) . "m";
+        $res = empty($this->borderStyle) ? '' : "\e[" . \implode(';', $this->borderStyle) . 'm';
         $res .= $len === 1 ? $this->chars[$char] : \str_repeat($this->chars[$char], $len);
         $res .= empty($this->borderStyle) ? '' : "\e[0m";
 
