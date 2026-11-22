@@ -37,7 +37,7 @@ final class MemoryOutput extends Output
     {
         \rewind($this->buffer);
 
-        return (string)\stream_get_contents($this->buffer);
+        return (string) \stream_get_contents($this->buffer);
     }
 
     /**
@@ -45,7 +45,7 @@ final class MemoryOutput extends Output
      */
     public function plain(): string
     {
-        return (string)\preg_replace('/\e\[[0-9;]*m/', '', $this->captured());
+        return (string) \preg_replace('/\e\[[0-9;]*m/', '', $this->captured());
     }
 
     /**

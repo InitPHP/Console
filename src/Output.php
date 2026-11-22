@@ -95,7 +95,7 @@ class Output implements OutputInterface
             throw new \InvalidArgumentException('$total must be greater than zero.');
         }
 
-        $progress = (int)\floor(($done / $total) * 100);
+        $progress = (int) \floor(($done / $total) * 100);
         if ($progress < 0) {
             $progress = 0;
         } elseif ($progress > 100) {
@@ -104,12 +104,12 @@ class Output implements OutputInterface
         $remaining = 100 - $progress;
 
         \fwrite($this->stdout, \sprintf(
-            "\033[0G\033[2K[%'=" . $progress . "s>%-" . $remaining . "s] - %d%%   %s/%s",
+            "\033[0G\033[2K[%'=" . $progress . 's>%-' . $remaining . 's] - %d%%   %s/%s',
             '',
             '',
             $progress,
             $done,
-            $total
+            $total,
         ));
     }
 
@@ -123,7 +123,7 @@ class Output implements OutputInterface
             if (!\is_string($key)) {
                 continue;
             }
-            $rowSpace = (int)\ceil(\strlen($key) / 8);
+            $rowSpace = (int) \ceil(\strlen($key) / 8);
             if ($space < $rowSpace) {
                 $space = $rowSpace;
             }
@@ -154,7 +154,7 @@ class Output implements OutputInterface
         $this->write($question, [], true);
 
         do {
-            $input = Helpers::strValueCast(\trim((string)\fgets($this->stdin)));
+            $input = Helpers::strValueCast(\trim((string) \fgets($this->stdin)));
             if (\in_array($input, ['exit', 'quit'], true)) {
                 $this->terminate();
                 return null;
@@ -172,7 +172,7 @@ class Output implements OutputInterface
         $this->write($question->getQuestion(), [], true);
 
         do {
-            $answer = \trim((string)\fgets($this->stdin));
+            $answer = \trim((string) \fgets($this->stdin));
             if ($question->hasOption($answer)) {
                 return Helpers::strValueCast($answer);
             }
@@ -195,13 +195,13 @@ class Output implements OutputInterface
             $replace = [];
             foreach ($context as $key => $val) {
                 if (!\is_array($val) && (!\is_object($val) || \method_exists($val, '__toString'))) {
-                    $replace['{' . $key . '}'] = (string)$val;
+                    $replace['{' . $key . '}'] = (string) $val;
                 }
             }
             $str = \strtr($str, $replace);
         }
 
-        $msg = "\e[" . \implode(';', $format) . "m" . $str . "\e[0m"
+        $msg = "\e[" . \implode(';', $format) . 'm' . $str . "\e[0m"
             . ($newLine ? \PHP_EOL : '');
         \fwrite($this->stdout, $msg);
     }

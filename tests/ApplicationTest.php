@@ -25,8 +25,7 @@ final class ApplicationTest extends TestCase
     {
         $app = $this->app(new MemoryOutput());
 
-        self::assertSame($app, $app->register('noop', static function (): void {
-        }));
+        self::assertSame($app, $app->register('noop', static function (): void {}));
     }
 
     public function testRegisterRejectsUnknownClass(): void
@@ -141,8 +140,7 @@ final class ApplicationTest extends TestCase
         $out = new MemoryOutput();
         $app = $this->app($out);
         $app->register(GreetCommand::class);
-        $app->register('solo', static function (): void {
-        }, 'A solo command.');
+        $app->register('solo', static function (): void {}, 'A solo command.');
 
         self::assertTrue($app->run(['console.php', 'list']));
         $plain = $out->plain();

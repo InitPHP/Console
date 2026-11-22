@@ -137,7 +137,7 @@ final class InputArgument
      */
     public function getDefault(): ?string
     {
-        return isset($this->default) ? (string)$this->default : null;
+        return isset($this->default) ? (string) $this->default : null;
     }
 
     /**
@@ -193,7 +193,7 @@ final class InputArgument
                 return true;
             }
             if (\in_array($value, [0, 1], true)) {
-                $value = (bool)$value;
+                $value = (bool) $value;
                 return true;
             }
             return false;
@@ -209,7 +209,7 @@ final class InputArgument
         }
         if ($this->type === self::STR) {
             if (\is_numeric($value) || \is_bool($value)) {
-                $value = (string)$value;
+                $value = (string) $value;
             }
             return \is_string($value);
         }

@@ -19,6 +19,6 @@
 if (!class_exists(\InitPHP\CLITable\Table::class, false)) {
     class_alias(
         \InitPHP\Console\Utils\Table::class,
-        'InitPHP\\CLITable\\Table'
+        'InitPHP\\CLITable\\Table',
     );
 }

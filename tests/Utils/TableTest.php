@@ -14,7 +14,7 @@ final class TableTest extends TestCase
         $table = Table::create()->row(['id' => 1, 'name' => 'Ada']);
 
         self::assertInstanceOf(Table::class, $table);
-        self::assertSame($table->getContent(), (string)$table);
+        self::assertSame($table->getContent(), (string) $table);
     }
 
     public function testFluentSettersReturnSelf(): void
