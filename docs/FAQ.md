@@ -149,10 +149,10 @@ Yes — it was merged in as of 2.1 and the old class name still resolves via a
 
 ### Will 2.x see breaking changes?
 
-Not within the 2.x releases. The one pending breaking change, the PHP `^8.2`
-requirement, is recorded in the
-[changelog](https://github.com/InitPHP/Console/blob/main/CHANGELOG.md) under
-"Unreleased". Anything that breaks the public contract (classes,
+Not within the 2.x releases. The one breaking change since 2.x, the PHP `^8.2`
+requirement, shipped in 3.0.0 and is recorded in the
+[changelog](https://github.com/InitPHP/Console/blob/main/CHANGELOG.md).
+Anything that breaks the public contract (classes,
 interfaces, the `Command` hooks, exception behaviour) would require a major
 bump. New optional parameters and new methods are added compatibly.
 

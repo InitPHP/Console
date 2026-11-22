@@ -114,10 +114,10 @@ adjust as noted.
 If any of these surprise you, the linked pages document the current behaviour
 precisely.
 
-## PHP requirement in the next release
+## PHP requirement in 3.0.0
 
-The unreleased changes require PHP `^8.2` (the 2.x releases supported
-`>=7.2`) and are listed as breaking in the
+Version 3.0.0 requires PHP `^8.2` (the 2.x releases supported
+`>=7.2`) and is listed as breaking in the
 [changelog](https://github.com/InitPHP/Console/blob/main/CHANGELOG.md).
 Stay on a 2.x release if you still run PHP 7.2 through 8.1.
 
