@@ -42,7 +42,7 @@ final class MemoryOutput extends Output
     /** Captured output with SGR colour codes stripped. */
     public function plain(): string
     {
-        return (string) preg_replace('/\e\[[0-9;]*m/', '', $this->captured());
+        return (string) preg_replace('/\e\x5B[0-9;]*m/', '', $this->captured());
     }
 
     protected function terminate(int $code = 0): void
