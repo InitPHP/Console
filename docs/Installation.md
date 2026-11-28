@@ -4,7 +4,7 @@
 
 | | |
 | --- | --- |
-| PHP | `^8.2` (CI runs 8.2, 8.3, 8.4 and 8.5) |
+| PHP | `^8.2` (CI runs 8.2, 8.3, 8.4, 8.5 and 8.6) |
 | Extensions | None required; `ext-mbstring` recommended |
 | Runtime dependencies | None |
 
@@ -77,7 +77,7 @@ If the autoloader cannot locate the classes, double-check that you ran
 Every pull request runs the QA matrix (coding standards, static analysis,
 unit tests) against:
 
-- PHP 8.2, 8.3, 8.4, 8.5
+- PHP 8.2, 8.3, 8.4, 8.5, 8.6
 
 If you discover a regression on a supported version, please
 [file an issue](https://github.com/InitPHP/Console/issues/new) and include the

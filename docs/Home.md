@@ -69,7 +69,7 @@ This library splits the tokens after the command name into three buckets:
 ## Package metadata
 
 - **License**: MIT
-- **Minimum PHP**: 8.2 (CI matrix runs 8.2 – 8.5)
+- **Minimum PHP**: 8.2 (CI matrix runs 8.2 – 8.6)
 - **Runtime dependencies**: none
 - **Optional extension**: `ext-mbstring` (improves table alignment for UTF-8 values)
 - **Packagist**: [`initphp/console`](https://packagist.org/packages/initphp/console)
