@@ -118,7 +118,7 @@ without it the renderer falls back to byte length. See
 
 ### Which PHP versions are supported?
 
-PHP **8.2 and up**. CI runs the QA matrix on 8.2, 8.3, 8.4 and 8.5.
+PHP **8.2 and up**. CI runs the QA matrix on 8.2, 8.3, 8.4, 8.5 and 8.6.
 
 ### Why does the code use PHPDoc types instead of native types in places?
 
